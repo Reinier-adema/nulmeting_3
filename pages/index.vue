@@ -19,6 +19,15 @@
         </tr>
       </thead>
       <tbody>
+        <tr v-for="todos in items">
+          <td>{{todos.assignee}}</td>
+          <td>{{
+            todos.dueDateTime.split("T")[0] + " at " + 
+            todos.dueDateTime.split("T")[1].split(":")[0] + ":" + 
+            todos.dueDateTime.split("T")[1].split(":")[1]}}
+          </td>
+          <td>{{todos.description}}</td>
+      </tr>
       </tbody>
     </table>
   </div>
@@ -26,27 +35,10 @@
 
 <script>
 export default {
-  mounted: function(){
-    let table = document.getElementById("table");
-      let todos = this.$store.state.todos;
-      for(let j in todos){
-        let tr = document.createElement("tr");
-        for (let i in todos[j])
-        {
-          if(i != "id"){
-            let td = document.createElement("td");
-            if(i == "dueDateTime")
-            {
-              let time = todos[j][i].split("T");
-              td.innerHTML = time[0] + " at " + time[1].split(":")[0] + ":" + time[1].split(":")[1]; 
-            }      
-            else
-              td.innerHTML = todos[j][i];
-            tr.appendChild(td);
-          }
-        }
-        table.appendChild(tr);
-      }
+  data(){
+    return {
+      items: this.$store.state.todos
+    }
   },
   methods: {
     async todos() {
@@ -54,28 +46,7 @@ export default {
       .then(function (response) {
         return response;
       });
-      var before = this.$store.state.todos.length;
-      this.$store.commit('show', x);     
-      var after = this.$store.state.todos.length;
-      if(before < after){  
-        let table = document.getElementById("table");
-        let tr = document.createElement("tr");
-        for (let i in x.todo)
-        {
-          if(i != "id"){
-            let td = document.createElement("td");
-            if(i == "dueDateTime")
-            {
-              let time = x.todo[i].split("T");
-              td.innerHTML = time[0] + " at " + time[1].split(":")[0] + ":" + time[1].split(":")[1]; 
-            }      
-            else
-              td.innerHTML = x.todo[i];
-            tr.appendChild(td);
-          }
-        }
-        table.appendChild(tr);
-      }
+      this.$store.commit('show', x);
     }
   }
 }
